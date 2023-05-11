@@ -13,11 +13,12 @@ function leaveRoom(socket) {
     socket.broadcast
       .to(roomCode)
       .emit("alert", `${socket.nickName}님이 나갔습니다.`);
+    socket.currentRoom = "";
   }
 }
 
 io.on("connection", (socket) => {
-  socket.roomList = [];
+  socket.currentRoom = "";
 
   //연결 종료할 때
   socket.on("disconnect", () => {
@@ -48,5 +49,11 @@ io.on("connection", (socket) => {
     socket.nickName = nickName;
 
     io.to(roomCode).emit("alert", `${nickName}님이 입장했습니다.`);
+  });
+
+  //마우스 좌표
+  socket.on("get-mouse-point", (data) => {
+    const { x, y, nickName } = data;
+    io.to(currentRoom).emit("give-point", { x, y, nickName });
   });
 });
