@@ -1,6 +1,6 @@
 const app = require("express")();
 
-const server = app.listen(8005, () => {
+const server = app.listen(12321, () => {
   console.log("서버 실행");
 });
 
@@ -11,18 +11,48 @@ const io = SocketIO(server, { path: "/socket.io" });
 const { joinRoom } = require("./room")(io);
 const { getMousePoint } = require("./mouse")(io);
 const { updateImage } = require("./image")(io);
+const { getCatPoint } = require("./cat")(io);
+
+app.get("/", (req, res) => {
+  res.send("live");
+});
 
 const onConnection = (socket) => {
   socket.currentRoom = "";
+
+  // 연결 2명
+  // socket1.rooms = [] socket2.rooms = []
+  // socket1.rooms.push('dsd') -> ['dsd']  socket2.rooms = []
   console.log("접속 socket.id : ", socket.id);
-  socket.on("temp", tempFunction);
 
   //연결 종료할 때
   socket.on("disconnect", () => {
     console.log("클라이언트 접속 해제", socket.id);
-    leaveRoom(socket);
+    leaveRoom(socket); // <--- this socket ???
+    /* 
+      const tempFnc = leaveRoom.bind(this);
+      tempFnc();
+
+      function TempClass() {
+
+        function a() {
+          this <<---- TempClass
+        }
+      }
+      const a = new TempClass();
+      a.a()
+
+
+     */
     clearInterval(socket.interval);
   });
+  /* 
+  function socket () {
+    function on(key, callback) {
+      callback() <---- this  === socket
+    }
+  }
+  */
 
   //room 나갈 때
   socket.on("leave-room", leaveRoom);
@@ -37,6 +67,8 @@ const onConnection = (socket) => {
 
   //마우스 좌표
   socket.on("get-mouse-point", getMousePoint);
+
+  socket.on("get-cat-point", getCatPoint);
 
   //이미지 수신 (클라이언트에게서 이미지 받기)
   socket.on("update-image", updateImage);
