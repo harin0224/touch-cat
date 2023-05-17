@@ -8,7 +8,8 @@ const SocketIO = require("socket.io");
 
 const io = SocketIO(server, { path: "/socket.io" });
 
-const { joinRoom } = require("./room")(io);
+const { joinRoom, leaveRoom, getRoomInfo } = require("./room")(io);
+const { getItemPoint } = require("./items")(io);
 const { getMousePoint } = require("./mouse")(io);
 const { updateImage } = require("./image")(io);
 const { getCatPoint } = require("./cat")(io);
@@ -65,10 +66,15 @@ const onConnection = (socket) => {
   //room
   socket.on("join-room", joinRoom);
 
+  //room 입장정보 전달
+  socket.on("get-room-info", getRoomInfo);
+
   //마우스 좌표
   socket.on("get-mouse-point", getMousePoint);
 
   socket.on("get-cat-point", getCatPoint);
+
+  socket.on("get-item-point", getItemPoint);
 
   //이미지 수신 (클라이언트에게서 이미지 받기)
   socket.on("update-image", updateImage);
