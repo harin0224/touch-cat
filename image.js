@@ -1,4 +1,6 @@
 module.exports = (io) => {
+  const getImage = function (data) {};
+
   const updateImage = function (data) {
     const socket = this;
     /* 
