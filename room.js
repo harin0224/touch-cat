@@ -33,8 +33,13 @@ module.exports = (io) => {
     const { roomCode, nickName } = data;
     console.log(`room code : ${roomCode}`);
 
-    //방 입장
-    socket.join(roomCode);
+    //방 만들기 및 입장
+
+    /* 
+      room = {}
+      room[roomCode] = {} 
+    */
+
     socket.currentRoom = roomCode;
 
     //입장 시 닉네임 설정
@@ -68,8 +73,14 @@ module.exports = (io) => {
     return rooms;
   }
 
+  const getRoomInfo = function (data) {
+    const socket = this;
+    socket.emit("get-room-Info", rooms);
+  };
+
   return {
     joinRoom,
     leaveRoom,
+    getRoomInfo,
   };
 };
