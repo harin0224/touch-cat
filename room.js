@@ -1,6 +1,6 @@
 // module.exports -> 외부에서도 해당 파일에 있는 코드를 사용할 수 있게 내보내겠습니다. 라는 의미
 module.exports = (io) => {
-  const rooms = {};
+  let rooms = {};
 
   /* 
   1. key : value 데이터 저장
@@ -19,7 +19,7 @@ module.exports = (io) => {
       roomCode : 'roomCode',
       nickname:'dokbawi'
     }
-  ]
+  ] 
   */
 
   const joinRoom = function (data) {
@@ -34,7 +34,7 @@ module.exports = (io) => {
     console.log(`room code : ${roomCode}`);
 
     //방 만들기 및 입장
-
+    socket.join(roomCode);
     /* 
       room = {}
       room[roomCode] = {} 
@@ -47,17 +47,38 @@ module.exports = (io) => {
 
     rooms = roomInfo(rooms, data);
 
-    socket.broadcast
-      .to(socket.currentRoom)
-      .emit("alert", `${nickName}님이 방에 입장했습니다.`);
+    const result = {
+      type: "join-room",
+      data: { nickName: socket.nickName },
+    };
+
+    socket.broadcast.to(socket.currentRoom).emit("alert", result);
   };
 
   const leaveRoom = function (data) {
     const socket = this;
+
+    if (!socket.currentRoom) {
+      return;
+    }
+
     socket.leave(socket.currentRoom);
-    socket.broadcast
-      .to(socket.currentRoom)
-      .emit("alert", `${socket.nickName}님이 나갔습니다.`);
+    const result = {
+      type: "leave-room",
+      data: { nickName: socket.nickName },
+    };
+
+    socket.broadcast.to(socket.currentRoom).emit("alert", result);
+    // 나간 사람 삭제
+    rooms[socket.currentRoom] = rooms[socket.currentRoom]?.filter(
+      (param) => param.nickName != socket.nickName
+    );
+
+    // 빈 방 삭제
+    if (rooms[socket.currentRoom].length === 0) {
+      delete rooms[socket.currentRoom];
+    }
+
     socket.currentRoom = "";
   };
 
@@ -67,7 +88,11 @@ module.exports = (io) => {
     // console.log(rooms)---> {}
     // rooms[socket.roomCode] --> undefinded --> []
     const { nickName, uid, image, roomCode } = data;
-    rooms[roomCode] = rooms[roomCode] | [];
+
+    console.log(`data : ${JSON.stringify(data)}`);
+    console.log("1 : ", rooms);
+    rooms[roomCode] = rooms[roomCode] || [];
+    console.log("2 : ", rooms);
     rooms[roomCode].push({ nickName, uid, image });
 
     return rooms;
@@ -75,7 +100,8 @@ module.exports = (io) => {
 
   const getRoomInfo = function (data) {
     const socket = this;
-    socket.emit("get-room-Info", rooms);
+    console.log(`get-room-Info`);
+    socket.emit("get-room-Info", rooms[socket.currentRoom]);
   };
 
   return {
