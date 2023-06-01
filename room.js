@@ -19,7 +19,7 @@ module.exports = (io) => {
       roomCode : 'roomCode',
       nickname:'dokbawi'
     }
-  ]
+  ] 
   */
 
   const joinRoom = function (data) {
@@ -47,9 +47,12 @@ module.exports = (io) => {
 
     rooms = roomInfo(rooms, data);
 
-    socket.broadcast
-      .to(socket.currentRoom)
-      .emit("alert", `${nickName}님이 방에 입장했습니다.`);
+    const result = {
+      type: "join-room",
+      data: { nickName: socket.nickName },
+    };
+
+    socket.broadcast.to(socket.currentRoom).emit("alert", result);
   };
 
   const leaveRoom = function (data) {
@@ -60,9 +63,12 @@ module.exports = (io) => {
     }
 
     socket.leave(socket.currentRoom);
-    socket.broadcast
-      .to(socket.currentRoom)
-      .emit("alert", `${socket.nickName}님이 나갔습니다.`);
+    const result = {
+      type: "leave-room",
+      data: { nickName: socket.nickName },
+    };
+
+    socket.broadcast.to(socket.currentRoom).emit("alert", result);
     // 나간 사람 삭제
     rooms[socket.currentRoom] = rooms[socket.currentRoom]?.filter(
       (param) => param.nickName != socket.nickName
@@ -95,7 +101,7 @@ module.exports = (io) => {
   const getRoomInfo = function (data) {
     const socket = this;
     console.log(`get-room-Info`);
-    socket.emit("get-room-Info", rooms);
+    socket.emit("get-room-Info", rooms[socket.currentRoom]);
   };
 
   return {

@@ -7,7 +7,7 @@ const server = app.listen(12321, () => {
 
 const SocketIO = require("socket.io");
 
-const io = SocketIO(server, { path: "/socket.io" });
+const io = SocketIO(server, { path: "/socket.io", cors: { origin: "*" } });
 
 const { joinRoom, leaveRoom, getRoomInfo } = require("./room")(io);
 const { getItemPoint } = require("./items")(io);
