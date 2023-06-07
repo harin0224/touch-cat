@@ -31,7 +31,7 @@ module.exports = (io) => {
     const socket = this;
 
     const { roomCode, nickName } = data;
-    console.log(`room code : ${roomCode}`);
+    //console.log(`room code : ${roomCode}`);
 
     //방 만들기 및 입장
     socket.join(roomCode);
@@ -64,7 +64,7 @@ module.exports = (io) => {
 
     socket.leave(socket.currentRoom);
     const result = {
-      type: "leave-room",
+      type: "leave-   room",
       data: { nickName: socket.nickName },
     };
 
@@ -89,10 +89,10 @@ module.exports = (io) => {
     // rooms[socket.roomCode] --> undefinded --> []
     const { nickName, uid, image, roomCode } = data;
 
-    console.log(`data : ${JSON.stringify(data)}`);
-    console.log("1 : ", rooms);
+    //console.log(`data : ${JSON.stringify(data)}`);
+    //console.log("1 : ", rooms);
     rooms[roomCode] = rooms[roomCode] || [];
-    console.log("2 : ", rooms);
+    //console.log("2 : ", rooms);
     rooms[roomCode].push({ nickName, uid, image });
 
     return rooms;
@@ -100,7 +100,6 @@ module.exports = (io) => {
 
   const getRoomInfo = function (data) {
     const socket = this;
-    console.log(`get-room-Info`);
     socket.emit("get-room-Info", rooms[socket.currentRoom]);
   };
 

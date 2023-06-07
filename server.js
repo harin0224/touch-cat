@@ -106,6 +106,23 @@ const onConnection = (socket) => {
   // socket.on("send-image", (data) => {
   //   io.to(socket.currentRoom).emit("give-image", data);
   // });
+
+  // event log
+  var onevent = socket.onevent;
+  socket.onevent = function (packet) {
+    var args = packet.data || [];
+    onevent.call(this, packet); // original call
+    packet.data = ["*"].concat(args);
+    onevent.call(this, packet); // additional call to catch-all
+  };
+
+  const notLogging = ["get-mouse-point", "get-cat-point"];
+  socket.on("*", function (event, data) {
+    if (notLogging.includes(event)) {
+      return;
+    }
+    console.log(event, data);
+  });
 };
 
 io.on("connection", onConnection);
@@ -129,19 +146,6 @@ io.on("connection", onConnection);
     () => {}
     (async () => {})()
 */
-
-(async () => {
-  // await delay(1000);
-  const tunnel = await localtunnel({ port: 12321, subdomain: "touch-cat" });
-
-  // await localtunnel({ port: 12321, subdomain: "touch-cat" });
-  console.log(tunnel.url);
-
-  tunnel.on("close", () => {
-    // tunnels are closed//
-    console.log("server closed");
-  });
-})();
 
 function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
