@@ -100,7 +100,8 @@ module.exports = (io) => {
 
   const getRoomInfo = function (data) {
     const socket = this;
-    socket.emit("get-room-Info", rooms[socket.currentRoom]);
+    socket.emit("get-room-info", rooms[socket.currentRoom]);
+    console.log("gri");
   };
 
   return {
