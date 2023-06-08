@@ -14,6 +14,7 @@ const { getItemPoint } = require("./items")(io);
 const { getMousePoint } = require("./mouse")(io);
 const { updateImage } = require("./image")(io);
 const { getCatPoint } = require("./cat")(io);
+const { itemMotion } = require("./items")(io);
 
 app.get("/", (req, res) => {
   res.send("live");
@@ -101,6 +102,8 @@ const onConnection = (socket) => {
 
   //이미지 수신 (클라이언트에게서 이미지 받기)
   socket.on("update-image", updateImage);
+
+  socket.on("give-motion-info", itemMotion);
 
   // //이미지 발신 (room 사람들에게 이미지 보내기)
   // socket.on("send-image", (data) => {

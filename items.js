@@ -8,7 +8,13 @@ module.exports = (io) => {
       .emit("give-item-point", { x, y, nickName });
   };
 
+  const itemMotion = function (data) {
+    const socket = this;
+    socket.broadcast.to(socket.currentRoom).emit("give-motion-info", data);
+  };
+
   return {
     getItemPoint,
+    itemMotion,
   };
 };

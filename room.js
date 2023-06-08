@@ -87,13 +87,17 @@ module.exports = (io) => {
     // A.push() <--- A가 배열인지 아닌지 모르는상태
     // console.log(rooms)---> {}
     // rooms[socket.roomCode] --> undefinded --> []
-    const { nickName, uid, image, roomCode } = data;
+    const { nickName, image, roomCode } = data;
 
     //console.log(`data : ${JSON.stringify(data)}`);
     //console.log("1 : ", rooms);
     rooms[roomCode] = rooms[roomCode] || [];
     //console.log("2 : ", rooms);
-    rooms[roomCode].push({ nickName, uid, image });
+    rooms[roomCode].push({ nickName, image });
+
+    //   rooms:{
+    //       "123": [{nickName: "", image: "png"}]
+    // }
 
     return rooms;
   }
@@ -101,7 +105,6 @@ module.exports = (io) => {
   const getRoomInfo = function (data) {
     const socket = this;
     socket.emit("get-room-info", rooms[socket.currentRoom]);
-    console.log("gri");
   };
 
   return {
