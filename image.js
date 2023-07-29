@@ -34,9 +34,17 @@ module.exports = (io) => {
       }
     }
 
+<<<<<<< Updated upstream
     socket.broadcast
       .to(socket.currentRoom)
       .emit("get-room-info", rooms[socket.currentRoom]);
+=======
+    socket.broadcast.to(socket.currentRoom).emit("alert", {
+      type: `update-image`,
+      nickname,
+      image,
+    });
+>>>>>>> Stashed changes
 
     // console.log("룸:", rooms);
   };
