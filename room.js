@@ -1,6 +1,7 @@
 // module.exports -> 외부에서도 해당 파일에 있는 코드를 사용할 수 있게 내보내겠습니다. 라는 의미
 module.exports = (io) => {
   let rooms = {};
+  global.rooms = rooms;
 
   /* 
   1. key : value 데이터 저장

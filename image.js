@@ -1,6 +1,4 @@
 module.exports = (io) => {
-  let { rooms } = require("./room")(io);
-
   const getImage = function (data) {};
 
   const updateImage = function (data) {
@@ -20,6 +18,9 @@ module.exports = (io) => {
     // };
 
     const { image, nickName } = data; //  same == const key1 = data.key1
+    if (!rooms) {
+      return;
+    }
     for (let i = 0; i < rooms[socket.currentRoom].length; i++) {
       // console.log(
       //   "값1:",
@@ -34,17 +35,11 @@ module.exports = (io) => {
       }
     }
 
-<<<<<<< Updated upstream
-    socket.broadcast
-      .to(socket.currentRoom)
-      .emit("get-room-info", rooms[socket.currentRoom]);
-=======
     socket.broadcast.to(socket.currentRoom).emit("alert", {
       type: `update-image`,
-      nickname,
+      nickName,
       image,
     });
->>>>>>> Stashed changes
 
     // console.log("룸:", rooms);
   };
